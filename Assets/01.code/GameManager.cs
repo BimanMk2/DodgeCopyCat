@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject plane;
 
     // UI Text 컴포넌트들
-    public Text gameOverText;
+    
     public Text ClearText;
     public Text boxCounterText;
 
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         isGameover = false;
 
         // 게임 시작 시, 게임 종료와 클리어 UI는 숨깁니다.
-        gameOverText.gameObject.SetActive(false);
+        
         ClearText.gameObject.SetActive(false);
 
         // 모든 박스를 생성합니다.
@@ -78,8 +78,6 @@ public class GameManager : MonoBehaviour
     public void CollectBox()
     {
         collectedBoxes++;
-
-        // 박스를 먹을 때마다 카운터 UI를 업데이트합니다.
         UpdateBoxCounterText();
 
         if (collectedBoxes >= totalBoxesToCollect)
@@ -87,6 +85,23 @@ public class GameManager : MonoBehaviour
             // 게임 클리어 로직
             ClearText.gameObject.SetActive(true);
             isGameover = true;
+
+            // 모든 적 오브젝트를 찾아 파괴하는 함수 호출
+            DestroyAllEnemies();
+
+        }
+    }
+
+    // 씬에 있는 모든 적 오브젝트를 파괴하는 함수
+    private void DestroyAllEnemies()
+    {
+        // "Enemy" 태그를 가진 모든 오브젝트를 찾습니다.
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        // 찾은 모든 적 오브젝트를 순회하며 파괴합니다.
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
         }
     }
 
@@ -100,11 +115,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene("SampleScene");
+
+        }
+
+    }
+
     // 다른 스크립트(예: 주인공 또는 적)에서 게임 오버 시 이 함수를 호출합니다.
     public void EndGame()
     {
-        gameOverText.gameObject.SetActive(true);
         isGameover = true;
+        // 게임 오버 시 GameOverScene으로 이동
+        SceneManager.LoadScene("GameOverScene");
+
         // 필요하다면, 여기에 게임을 멈추거나 씬을 다시 로드하는 코드를 추가할 수 있습니다.
     }
 }
